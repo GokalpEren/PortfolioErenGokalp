@@ -53,7 +53,7 @@ header {
 
 /* Section Styles */
 .frame {
-    min-height: 100vh;
+    min-height: 107vh;
     padding: 50px;
     display: flex;
     flex-direction: column;
@@ -65,6 +65,16 @@ header {
 
 #about {
     background-color: #faf1de;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-left: 15%;
+    padding-top: 40vh;
+    text-align: left;
+}
+
+.about-content {
+    max-width: 50%;
 }
 
 #skills {
@@ -82,8 +92,8 @@ header {
 h3 {
     text-align: center;
     color: #333;
-    padding-top: 5px;
-    padding-bottom: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 h1 {
@@ -91,4 +101,8 @@ h1 {
     font-weight: 700;
     font-style: normal;
     font-size: 3rem;
+}
+
+#about h1, #about h3, #about p {
+    text-align: left;
 }
