@@ -9,46 +9,77 @@
 </head>
 
 <body>
-    <header>
-        <div class="header-left"></div>
-        <nav class="header-right">
-            <a href="#" class="btn">Contact Me</a>
-            <a href="#" class="btn">GitHub</a>
-            <a href="#" class="btn">LinkedIn</a>
-        </nav>
-    </header>
+    <div class="scrollbar-wrapper">
+        <div class="main-content">
+            <nav class="sidebar">
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#experience">Experience</a></li>
+                    <li><a href="#skills">Skills</a></li>
+                </ul>
+            </nav>
 
-    <section class="frame" id="about">
-        <div class="about-content">
-            <h1>A. Eren Gökalp</h1>
-            <h3>Computer Science Student | Multi-Disciplinary Artist</h3>
-            <p> Currently a computer science student at Bilkent University. Driven to become the greatest artist in the world.
-                Many fields of interest such as music, philosophy, and literature. Tries to apply knowledge from various areas
-                into each other.
-            </p>
+            <header>
+                <div class="header-left"></div>
+                <nav class="header-right">
+                    <a href="#" class="btn">Contact Me</a>
+                    <a href="#" class="btn">GitHub</a>
+                    <a href="#" class="btn">LinkedIn</a>
+                </nav>
+            </header>
+
+            <section class="frame" id="about">
+                <div class="about-content content">
+                    <h1>A. Eren Gökalp</h1>
+                    <h3>Computer Science Student | Multi-Disciplinary Artist</h3>
+                    <p> Currently a computer science student at Bilkent University. Driven to become the greatest artist in the world.
+                        Many fields of interest such as music, philosophy, and literature. Tries to apply knowledge from various areas
+                        into each other.
+                    </p>
+                </div>
+            </section>
+
+            <section class="frame" id="projects">
+                <div class="content">
+                    <h2>Projects</h2>
+                    <div class="projects-container">
+                        <div class="project-card">
+                            <img>
+                            <h4>Sorting Algorithm Visualizer</h4>
+                            <p>A bar graph that exhibits how various sorting algorithms work</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="frame" id="experience">
+                <div class="content">
+                    <h2>Experience</h2>
+                    <ul>
+                        <li>I have no professional experience yet.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="frame" id="skills">
+                <div class="content">
+                    <h2>Skills</h2>
+                    <ul>
+                        <li>Programming (Java, C++, HTML, CSS, Javascript, SQL)</li>
+                        <li>Frameworks (React, Node.js)</li>
+                        <li>Music Production (FL Studio, Audition)</li>
+                    </ul>
+                </div>
+            </section>    
         </div>
-    </section>
+    </div>
 
-    <section class="frame" id="projects">
-        <h2>Projects</h2>
-        <div class="projects-container">
-            <div class="project-card">
-                <img>
-                <h4>Sorting Algorithm Visualizer</h4>
-                <p>A bar graph that exhibits how various sorting algorithms work</p>
-            </div>
-        </div>
-    </section>
+    <div class="fake-scrollbar">
+        <div class="fake-scrollbar-thumb"></div>
+    </div>
 
-    <section class="frame" id="skills">
-        <h2>Skills</h2>
-        <ul>
-            <li>Programming (Java, C++, HTML, CSS, Javascript, SQL)</li>
-            <li>Frameworks (React, Node.js)</li>
-            <li>Music Production (FL Studio, Audition)</li>
-        </ul>
-    </section>    
+    <div id="scrollbar-message">Yeah no the scrollbar is only visual, sorry</div>
 
     <script src="main.js"></script>
 </body>
-</html>
