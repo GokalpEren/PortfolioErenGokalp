@@ -1,20 +1,44 @@
 const mainContent = document.querySelector('.main-content');
 
-mainContent.addEventListener('wheel', function(event) {
-    event.preventDefault();
-}, { passive: false });
-
 let scrollTimeout;
 let isScrolling = false;
+let wheelAccumulator = 0;
+let ignoreUntil = 0;
+let lastWheelEventTime = 0;
+
+function getSectionAnimMs() {
+    const rootStyles = getComputedStyle(document.documentElement);
+    const animMsRaw = rootStyles.getPropertyValue('--section-anim-ms').trim();
+    const animMs = Number.parseFloat(animMsRaw);
+    return Number.isFinite(animMs) ? animMs : 600;
+}
 
 mainContent.addEventListener('wheel', function(event) {
+    event.preventDefault();
+    const now = Date.now();
+    if (now < ignoreUntil) {
+        wheelAccumulator = 0;
+        return;
+    }
+
+    const dt = lastWheelEventTime ? now - lastWheelEventTime : 16;
+    const decay = Math.exp(-dt / 120);
+    wheelAccumulator = wheelAccumulator * decay + event.deltaY;
+    lastWheelEventTime = now;
+
     if (isScrolling) {
+        return;
+    }
+
+    const triggerThreshold = 140;
+    if (Math.abs(wheelAccumulator) < triggerThreshold) {
         return;
     }
 
     isScrolling = true;
 
-    const scrollDirection = event.deltaY > 0 ? 'down' : 'up';
+    const scrollDirection = wheelAccumulator > 0 ? 'down' : 'up';
+    wheelAccumulator = 0;
     const currentSection = Math.round(mainContent.scrollTop / window.innerHeight);
     
     let nextSection;
@@ -29,10 +53,12 @@ mainContent.addEventListener('wheel', function(event) {
         scrollToSection(nextSection);
     }
 
+    const cooldownMs = Math.max(300, getSectionAnimMs());
+    ignoreUntil = now + cooldownMs;
     scrollTimeout = setTimeout(() => {
         isScrolling = false;
-    }, 500); // Debounce time
-});
+    }, cooldownMs); // Debounce time
+}, { passive: false });
 
 const sidebarLinks = document.querySelectorAll('.sidebar a');
 sidebarLinks.forEach(link => {
@@ -55,6 +81,8 @@ function scrollToSection(sectionIndex) {
             behavior: 'smooth'
         });
 
+        updateSectionGradient(sectionIndex);
+
         sections.forEach((section, index) => {
             if (index === sectionIndex) {
                 section.classList.add('active');
@@ -70,6 +98,20 @@ function scrollToSection(sectionIndex) {
                 link.classList.remove('active');
             }
         });
+    }
+}
+
+function updateSectionGradient(sectionIndex) {
+    const sections = document.querySelectorAll('.frame');
+    if (!sections.length) {
+        return;
+    }
+
+    const current = sections[sectionIndex];
+    const currentColor = getComputedStyle(current).getPropertyValue('--section-color').trim();
+
+    if (currentColor) {
+        document.documentElement.style.setProperty('--section-current', currentColor);
     }
 }
 
@@ -117,3 +159,38 @@ scrollbar.addEventListener('mouseleave', () => {
         scrollbarMessage.classList.remove('show');
     }, 1500);
 });
+
+// Projects carousel
+const projectsTrack = document.querySelector('.projects-track');
+const prevProjectsBtn = document.querySelector('.carousel-btn.prev');
+const nextProjectsBtn = document.querySelector('.carousel-btn.next');
+
+function updateProjectButtons() {
+    if (!projectsTrack || !prevProjectsBtn || !nextProjectsBtn) {
+        return;
+    }
+
+    const maxScrollLeft = projectsTrack.scrollWidth - projectsTrack.clientWidth;
+    prevProjectsBtn.disabled = projectsTrack.scrollLeft <= 0;
+    nextProjectsBtn.disabled = projectsTrack.scrollLeft >= maxScrollLeft - 1;
+}
+
+function scrollProjects(direction) {
+    if (!projectsTrack) {
+        return;
+    }
+
+    const scrollAmount = projectsTrack.clientWidth;
+    projectsTrack.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+    });
+}
+
+if (prevProjectsBtn && nextProjectsBtn) {
+    prevProjectsBtn.addEventListener('click', () => scrollProjects(-1));
+    nextProjectsBtn.addEventListener('click', () => scrollProjects(1));
+    projectsTrack.addEventListener('scroll', updateProjectButtons);
+    window.addEventListener('resize', updateProjectButtons);
+    updateProjectButtons();
+}

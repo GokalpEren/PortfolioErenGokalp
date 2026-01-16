@@ -6,6 +6,8 @@
     --tertiary-color: #0f191f;
     --dark-color: #040608;
     --light-color: #dddddd;
+    --section-anim-ms: 600;
+    --section-current: var(--primary-color);
 }
 
 * {
@@ -34,6 +36,8 @@ body {
     height: 100%;
     overflow-y: scroll;
     width: calc(100% + 18px); /* Push scrollbar out of view */
+    background-color: var(--section-current);
+    transition: background-color calc(var(--section-anim-ms) * 1ms) ease;
 }
 
 .sidebar {
@@ -98,20 +102,51 @@ header {
     justify-content: center;
     position: relative;
     margin-left: 15%;
+    background: transparent;
 }
 
 .frame .content {
     opacity: 0;
-    transform: translateX(-100%);
-    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    transform: none;
+    filter: none;
+    transition: opacity calc(var(--section-anim-ms) * 1ms) ease;
 }
 
 .frame.active .content {
     opacity: 1;
-    transform: translateX(0);
 }
 
-#projects h2 {
+.frame .content > * {
+    opacity: 0;
+    transform: perspective(900px) translate3d(-80px, 160px, -120px) rotateX(28deg) rotateY(-24deg) rotateZ(-12deg) skew(14deg, 10deg) scale(0.75);
+    transform-origin: 50% 50%;
+    filter: saturate(1.9) contrast(1.4) brightness(1.35) hue-rotate(30deg) grayscale(0.2) drop-shadow(0 26px 36px rgba(0, 0, 0, 0.4));
+    clip-path: inset(12% 8% round 16px);
+    text-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    will-change: transform, filter, opacity;
+    transition: opacity calc(var(--section-anim-ms) * 1ms) cubic-bezier(0.16, 1, 0.3, 1),
+        transform calc(var(--section-anim-ms) * 1ms) cubic-bezier(0.16, 1, 0.3, 1),
+        filter calc(var(--section-anim-ms) * 1ms) ease,
+        clip-path calc(var(--section-anim-ms) * 1ms) ease,
+        text-shadow calc(var(--section-anim-ms) * 1ms) ease;
+}
+
+.frame.active .content > * {
+    opacity: 1;
+    transform: perspective(900px) translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg) scale(1);
+    filter: saturate(1) contrast(1) brightness(1) hue-rotate(0deg) grayscale(0) drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+    clip-path: inset(0 round 0);
+    text-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.frame.active .content > *:nth-child(1) { transition-delay: 0.05s; }
+.frame.active .content > *:nth-child(2) { transition-delay: 0.2s; }
+.frame.active .content > *:nth-child(3) { transition-delay: 0.35s; }
+.frame.active .content > *:nth-child(4) { transition-delay: 0.5s; }
+.frame.active .content > *:nth-child(5) { transition-delay: 0.65s; }
+#projects h2,
+#experience h2,
+#skills h2 {
     font-family: "Namdhinggo", serif;
     font-size: 3rem;
     text-align: center;
@@ -119,20 +154,37 @@ header {
     color: var(--light-color);
 }
 
-.projects-container {
+.projects-carousel {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    width: min(1100px, 95vw);
+}
+
+.projects-viewport {
+    overflow: hidden;
+}
+
+.projects-track {
+    --card-gap: 1.5rem;
     display: flex;
-    flex-direction: row;
-    gap: 1.5rem;
+    gap: var(--card-gap);
+    scroll-behavior: smooth;
     overflow-x: auto;
-    padding-bottom: 1rem;
+    scrollbar-width: none;
+    padding: 0.25rem 0 1rem;
+}
+
+.projects-track::-webkit-scrollbar {
+    display: none;
 }
 
 .project-card {
-    min-width: 250px;
-    max-width: 300px;
-    background-color: var(--light-color);
+    flex: 0 0 calc((100% - (2 * var(--card-gap))) / 3);
+    background-color: var(--primary-color);
     border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -143,17 +195,41 @@ header {
     transform: translateY(-5px);
 }
 
-.project-card img {
+.project-media,
+.project-media video,
+.project-media img {
     width: 100%;
     height: 150px;
     object-fit: cover;
+}
+
+.project-media video,
+.project-media img {
+    display: block;
+}
+
+.project-media img.artifactum-thumb {
+    object-fit: contain;
+    background-color: var(--secondary-color);
+}
+
+.project-media.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #2e4a5a, #111b21);
+    color: var(--light-color);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .project-card h3, 
 .project-card p {
     padding: 0.5rem 1rem;
     text-align: center;
-    color: var(--dark-color);
+    color: var(--light-color);
+    background-color: var(--primary-color);
 }
 
 .project-card a {
@@ -167,7 +243,7 @@ header {
 }
 
 #about {
-    background-color: var(--primary-color);
+    --section-color: var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -179,26 +255,24 @@ header {
 }
 
 #skills {
-    background-color: var(--secondary-color);
+    --section-color: var(--secondary-color);
 }
 
 #projects {
-    background-color: var(--tertiary-color);
+    --section-color: var(--tertiary-color);
 }
 
 #experience {
-    background-color: #1a2a33;
+    --section-color: #1a2a33;
 }
 
-#experience h2 {
-    font-family: "Namdhinggo", serif;
-    font-size: 3rem;
-    text-align: center;
-    margin-bottom: 2rem;
-    color: var(--light-color);
-}
 
 #experience ul {
+    color: var(--light-color);
+    list-style: none;
+}
+
+#skills ul {
     color: var(--light-color);
     list-style: none;
 }
@@ -224,8 +298,16 @@ h1 {
 }
 
 @media (max-width: 768px) {
-    #projects .project-card {
-        width: 100%;
+    .projects-carousel {
+        grid-template-columns: 1fr;
+    }
+
+    #projects .carousel-btn {
+        justify-self: center;
+    }
+
+    .project-card {
+        flex: 0 0 100%;
     }
 }
 
@@ -262,4 +344,26 @@ h1 {
 
 #scrollbar-message.show {
     opacity: 1;
+}
+#projects .carousel-btn {
+    background-color: var(--light-color);
+    color: var(--dark-color);
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+#projects .carousel-btn:hover {
+    transform: scale(1.05);
+    background-color: #ffffff;
+}
+
+#projects .carousel-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
 }
